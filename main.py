@@ -30,7 +30,10 @@ headers.append("star_gravity")
 print(star_gravity)
 final_data=[]
 for ind,data_row in enumerate(star_data):
-    final_data.append(star_data[ind]+star_gravity[ind])
+    #final_data.append(star_data[ind]+star_gravity[ind])
+    #final_data.append(d1+d2 for d1,d2 in zip(star_data[ind],star_gravity[ind]))
+    final_data.append(zip(star_data,star_gravity))
+    
 
 with open("real-final.csv","a+") as f:
     csvwriter=csv.writer(f)
