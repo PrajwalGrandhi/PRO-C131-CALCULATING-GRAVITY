@@ -1,41 +1,27 @@
+import pandas as pd
 import csv
 
-data=[]
-file=open("final.csv")
-csvreader=csv.reader(file)
+df=pd.read_csv('final.csv')
 
-for row in csvreader:
-    data.append(row)
-
-headers=data[0]
-star_data=data[1:]
-
-star_masses=[]
-star_radiuses=[]
-
-for data in star_data:
-    mass=float(data[4])*1.989e+30
-    radius=float(data[5])*6.957e+8
-    star_masses.append(mass)
-    star_radiuses.append(radius)
+star_radiuses=df['radius'].to_list()
+star_masses=df['mass'].to_list()
     
+def convert_to_si(radius,mass):
+    for i in range(0,len(radius)-1):
+        radius[i] = radius[i]*6.957e+8
+        mass[i] = mass[i]*1.989e+30     
+convert_to_si(star_radiuses,star_masses)
 
 star_gravity=[]
-for ind,data in enumerate(star_masses):
-    gravity=(float(star_masses[ind])*5.972e+24)/(float(star_radiuses[ind])*float(star_radiuses[ind])*6371000*6371000)*6.674e-11
-    star_gravity.append(gravity)
+def gravity_calculation(radius,mass):
+    G = 6.674e-11 
+    for index in range(0,len(mass)):
+        g= (mass[index]*G)/((radius[index])**2) 
+        star_gravity.append(g) 
+gravity_calculation(star_radiuses,star_masses)
 
-headers.append("star_gravity")
-#final_data=star_data+star_gravity
-print(star_gravity)
-final_data=[]
-for ind,data_row in enumerate(star_data):
-    #final_data.append(star_data[ind]+star_gravity[ind])
-    #final_data.append(d1+d2 for d1,d2 in zip(star_data[ind],star_gravity[ind]))
-    final_data.append(zip(star_data,star_gravity))
-    
+df['radius']=star_radiuses
+df['mass']=star_masses
+df['gravity']=star_gravity
 
-with open("real-final.csv","a+") as f:
-    csvwriter=csv.writer(f)
-    csvwriter.writerow(headers)
-    csvwriter.writerows(final_data)
+df.to_csv('real_final.csv')
